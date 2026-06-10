@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.sqlite
+*.db
+.env
+.DS_Store
+
+# Internal handoff notes (Spanish, not for publication)
+HANDOFF.md
