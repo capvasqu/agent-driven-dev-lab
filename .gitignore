@@ -1,9 +1,52 @@
+# Dependencies & build
 node_modules/
 dist/
-*.sqlite
-*.db
+build/
+coverage/
+*.tsbuildinfo
+
+# Environment & secrets — NEVER commit real values; share shape via .env.example
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+secrets.json
+
+# Claude Code — keep commands/skills/agents tracked, ignore local-only settings
+.claude/settings.local.json
+.claude/**/*.local.json
+
+# MCP — keep secrets out of .mcp.json (use env vars); ignore local overrides
+.mcp.local.json
+
+# Databases (SQLite)
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Runtime memory state (Stage 5) — session/working context, not source
+context/memories/
+
+# Security reports (Stage 4) — may expose vulnerability details; review before sharing
+security/reports/
+
+# OS / editor
 .DS_Store
+Thumbs.db
+desktop.ini
+*.swp
 
 # Internal handoff notes (Spanish, not for publication)
 HANDOFF.md
