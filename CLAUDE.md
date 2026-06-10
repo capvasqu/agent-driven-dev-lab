@@ -12,6 +12,11 @@ skills, commands, agents/subagents, tools, and our own MCP server.
 > Each stage produces an artifact (brief, PRD, spec, plan, tasks) that the human
 > reviews and approves **before** moving on to the next one.
 
+## Repository
+
+Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
+`origin/main` is the upstream — commits are written in English; `git push` is enough.
+
 ## Stack
 
 - Backend: Node + TypeScript (defined in Stage 2)
