@@ -28,6 +28,7 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 - Task IDs follow the `TASK-NNN` format (see the `task-conventions` skill).
 - Product artifacts live in `docs/` (`docs/discovery/`, `docs/define/`).
 - Application code lives in `src/`.
+- Secrets: never commit real values. Share config shape via `.env.example`; keep tokens out of `.mcp.json` (use env vars). The `.gitignore` is hardened for secrets, databases, logs, and runtime state. A base `.env.example` and a pre-commit secret-detection hook are planned for Stage 4.
 
 ## Lab status
 
