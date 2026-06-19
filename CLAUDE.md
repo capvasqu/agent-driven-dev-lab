@@ -33,7 +33,7 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 ## Lab status
 
 - [x] Stage 0 — Setup & "Hello, agentic"
-- [ ] Stage 1 — Product (Discovery → Define)
+- [x] Stage 1 — Product (Discovery → Define)
 - [ ] Stage 2 — App skeleton (specify → plan → implement)
 - [ ] Stage 3 — Tools & MCP
 - [ ] Stage 4 — QA & Security
