@@ -19,14 +19,14 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 
 ## Stack
 
-- Backend: Node + TypeScript (defined in Stage 2)
-- Persistence: SQLite
+- Backend: Node + TypeScript (ESM/NodeNext), Fastify HTTP framework — app under `src/`
+- Persistence: SQLite via `better-sqlite3` (repository pattern; db at `./data/tasks.db`, gitignored)
 - MCP: `@modelcontextprotocol/sdk` (Stage 3)
 
 ## Project conventions
 
 - Task IDs follow the `TASK-NNN` format (see the `task-conventions` skill).
-- Product artifacts live in `docs/` (`docs/discovery/`, `docs/define/`).
+- Product & build artifacts live in `docs/` (`docs/discovery/`, `docs/define/`, `docs/specify/`, `docs/plan/`).
 - Application code lives in `src/`.
 - Secrets: never commit real values. Share config shape via `.env.example`; keep tokens out of `.mcp.json` (use env vars). The `.gitignore` is hardened for secrets, databases, logs, and runtime state. A base `.env.example` and a pre-commit secret-detection hook are planned for Stage 4.
 
@@ -34,7 +34,7 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 
 - [x] Stage 0 — Setup & "Hello, agentic"
 - [x] Stage 1 — Product (Discovery → Define)
-- [ ] Stage 2 — App skeleton (specify → plan → implement)
+- [x] Stage 2 — App skeleton (specify → plan → implement)
 - [ ] Stage 3 — Tools & MCP
 - [ ] Stage 4 — QA & Security
 - [ ] Stage 5 — Persistent memory

@@ -31,3 +31,44 @@ automatically load:
 2. Type `/hello` → it should show the lab status and the next stage.
 3. Type: *"Create a sample task to test the format"* → the `task-conventions`
    skill should activate on its own and use the `TASK-NNN` format.
+
+## Running the app (Stage 2)
+
+The Stage 2 deliverable is an HTTP REST API over SQLite for the task / Kanban manager.
+
+**Requirements:** Node.js ≥ 20.
+
+```bash
+npm install      # install dependencies (Fastify, better-sqlite3, …)
+npm run dev      # start the API on http://127.0.0.1:3000 (tsx watch)
+# or, production-style:
+npm run build && npm start
+```
+
+The SQLite database is created on first run at `./data/tasks.db` (gitignored).
+Configuration is read from the environment with safe defaults: `PORT` (3000),
+`HOST` (127.0.0.1), `DB_PATH` (`./data/tasks.db`).
+
+**Quick smoke test** with `curl`:
+
+```bash
+# Create a task → 201 with a TASK-NNN id, status "backlog"
+curl -s -X POST http://127.0.0.1:3000/tasks \
+  -H 'content-type: application/json' \
+  -d '{"title":"Write the PRD","priority":"high"}'
+
+# List active tasks (archived excluded by default)
+curl -s http://127.0.0.1:3000/tasks
+
+# Move a task one step forward through the Kanban flow
+curl -s -X POST http://127.0.0.1:3000/tasks/TASK-001/status \
+  -H 'content-type: application/json' -d '{"direction":"forward"}'
+
+# Archive a task (soft — the row and id persist)
+curl -s -X POST http://127.0.0.1:3000/tasks/TASK-001/archive
+```
+
+Endpoints: `POST /tasks`, `GET /tasks` (`?status=`, `?archived=true`),
+`GET /tasks/{id}`, `PATCH /tasks/{id}`, `POST /tasks/{id}/status`,
+`POST /tasks/{id}/archive`. See `docs/define/prd.md` and `docs/specify/spec.md`
+for the full contract.
