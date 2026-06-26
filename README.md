@@ -84,7 +84,7 @@ The server is declared in [`.mcp.json`](.mcp.json) and runs over stdio:
 
 ```jsonc
 // .mcp.json
-{ "mcpServers": { "task-mcp": { "command": "npx", "args": ["tsx", "src/mcp/server.ts"] } } }
+{ "mcpServers": { "task-mcp": { "command": "npx", "args": ["tsx", "src/mcp/index.ts"] } } }
 ```
 
 **Tools:** `create_task`, `list_tasks`, `get_task`, `update_status`, `archive_task`.
@@ -93,3 +93,24 @@ To use it, open Claude Code in this folder and approve the `task-mcp` server whe
 prompted (it loads from `.mcp.json` at startup). Then ask Claude to create, list,
 move, or archive tasks — the changes land in `./data/tasks.db`. You can also run
 the server standalone with `npm run mcp`.
+
+## Testing & security (Stage 4)
+
+```bash
+npm test     # vitest: domain unit tests + HTTP integration (AC-1..AC-15) + MCP tools
+```
+
+Tests use an in-memory SQLite (`:memory:`) and Fastify's `app.inject()` (no port
+binding), so they never touch `./data/tasks.db`. HTTP tests are mapped one-to-one to
+the PRD acceptance criteria; the MCP tools are exercised over an in-memory transport.
+
+**Secret-detection pre-commit hook.** A dependency-free hook scans staged changes for
+secret-like patterns and blocks the commit if it finds one. Enable it once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Patterns live in `.githooks/secret-patterns.txt`; `.env.example` and the patterns file
+are excluded from the scan. Bypass intentionally (rare) with `git commit --no-verify`.
+Copy `.env.example` to `.env` (gitignored) to configure the app — never commit real secrets.

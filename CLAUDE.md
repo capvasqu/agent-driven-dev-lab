@@ -36,7 +36,7 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 - [x] Stage 1 — Product (Discovery → Define)
 - [x] Stage 2 — App skeleton (specify → plan → implement)
 - [x] Stage 3 — Tools & MCP
-- [ ] Stage 4 — QA & Security
+- [x] Stage 4 — QA & Security
 - [ ] Stage 5 — Persistent memory
 - [ ] Stage 6 — Orchestration & full chain
 - [ ] Stage 7 — Contribution & packaging
