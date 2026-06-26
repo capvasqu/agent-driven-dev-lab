@@ -72,3 +72,24 @@ Endpoints: `POST /tasks`, `GET /tasks` (`?status=`, `?archived=true`),
 `GET /tasks/{id}`, `PATCH /tasks/{id}`, `POST /tasks/{id}/status`,
 `POST /tasks/{id}/archive`. See `docs/define/prd.md` and `docs/specify/spec.md`
 for the full contract.
+
+## MCP server (Stage 3)
+
+`task-mcp` exposes the same task operations as **MCP tools**, so Claude can manage
+the backlog directly (dogfooding). It reuses the very same `TaskRepository` +
+SQLite as the REST API — HTTP and MCP are two thin adapters over one core, so a
+change made through a tool is the same row the API sees.
+
+The server is declared in [`.mcp.json`](.mcp.json) and runs over stdio:
+
+```jsonc
+// .mcp.json
+{ "mcpServers": { "task-mcp": { "command": "npx", "args": ["tsx", "src/mcp/server.ts"] } } }
+```
+
+**Tools:** `create_task`, `list_tasks`, `get_task`, `update_status`, `archive_task`.
+
+To use it, open Claude Code in this folder and approve the `task-mcp` server when
+prompted (it loads from `.mcp.json` at startup). Then ask Claude to create, list,
+move, or archive tasks — the changes land in `./data/tasks.db`. You can also run
+the server standalone with `npm run mcp`.

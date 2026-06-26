@@ -21,7 +21,7 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 
 - Backend: Node + TypeScript (ESM/NodeNext), Fastify HTTP framework — app under `src/`
 - Persistence: SQLite via `better-sqlite3` (repository pattern; db at `./data/tasks.db`, gitignored)
-- MCP: `@modelcontextprotocol/sdk` (Stage 3)
+- MCP: `task-mcp` stdio server via `@modelcontextprotocol/sdk` (`src/mcp/server.ts`, declared in `.mcp.json`); reuses the same repository/SQLite as the API
 
 ## Project conventions
 
@@ -35,7 +35,7 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 - [x] Stage 0 — Setup & "Hello, agentic"
 - [x] Stage 1 — Product (Discovery → Define)
 - [x] Stage 2 — App skeleton (specify → plan → implement)
-- [ ] Stage 3 — Tools & MCP
+- [x] Stage 3 — Tools & MCP
 - [ ] Stage 4 — QA & Security
 - [ ] Stage 5 — Persistent memory
 - [ ] Stage 6 — Orchestration & full chain
