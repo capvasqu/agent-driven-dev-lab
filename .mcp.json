@@ -2,7 +2,7 @@
   "mcpServers": {
     "task-mcp": {
       "command": "npx",
-      "args": ["tsx", "src/mcp/server.ts"],
+      "args": ["tsx", "src/mcp/index.ts"],
       "env": {
         "DB_PATH": "./data/tasks.db"
       }

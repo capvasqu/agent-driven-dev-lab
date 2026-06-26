@@ -18,7 +18,8 @@ export function buildServer(config: Config): FastifyInstance {
   // schemas' `additionalProperties: false` yields a 400 as the spec requires
   // (FR-10, Q2 — strict input).
   const app = Fastify({
-    logger: true,
+    // Quiet during tests (vitest sets NODE_ENV=test); request logging on otherwise.
+    logger: process.env.NODE_ENV !== 'test',
     ajv: { customOptions: { removeAdditional: false } },
   });
 

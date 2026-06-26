@@ -70,11 +70,12 @@ export const statusBodySchema = {
 } as const;
 
 /**
- * `POST /tasks/{id}/archive` body: none expected. An empty/absent body is
- * accepted; any unknown field → 400.
+ * `POST /tasks/{id}/archive` body: none expected. An empty or **absent** body is
+ * accepted (Fastify passes `null` when there is no body, hence `'null'` in the
+ * type union); any unknown field in a present object body → 400 (spec §4.6).
  */
 export const archiveBodySchema = {
-  type: 'object',
+  type: ['object', 'null'],
   additionalProperties: false,
   properties: {},
 } as const;
