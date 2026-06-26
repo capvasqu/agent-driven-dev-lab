@@ -1,0 +1,33 @@
+{
+  "name": "example",
+  "project": "agent-driven-dev-lab",
+  "createdAt": "2026-06-26T18:00:00Z",
+  "updatedAt": "2026-06-26T18:45:00Z",
+  "stage": {
+    "current": 5,
+    "title": "Persistent memory",
+    "status": "in_progress"
+  },
+  "git": {
+    "branch": "main",
+    "lastCommit": "10dd270 docs: document testing & security; mark Stage 4 complete"
+  },
+  "openThreads": [
+    "Building the /memory command (init | status | save | resume).",
+    "Deciding which memory artifacts to version vs keep gitignored."
+  ],
+  "nextSteps": [
+    "Run /memory init to seed a real working memory.",
+    "Verify the close/reopen checkpoint: reopen a fresh session and /memory resume.",
+    "Update README + CLAUDE.md and commit Stage 5."
+  ],
+  "decisions": [
+    "One /memory command dispatching on $ARGUMENTS over four modes.",
+    "Each memory is context/memories/<name>/ with session.json + memory.md + handoff.md.",
+    "context/memories/ stays gitignored; only context/memories/example/ is committed."
+  ],
+  "pointers": {
+    "memory": "memory.md",
+    "handoff": "handoff.md"
+  }
+}

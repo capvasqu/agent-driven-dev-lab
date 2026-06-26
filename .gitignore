@@ -36,8 +36,11 @@ secrets.json
 logs/
 npm-debug.log*
 
-# Runtime memory state (Stage 5) — session/working context, not source
-context/memories/
+# Runtime memory state (Stage 5) — session/working context, not source.
+# Keep the whole tree ignored except the committed, sanitized reference example.
+context/memories/*
+!context/memories/example/
+!context/memories/example/**
 
 # Security reports (Stage 4) — may expose vulnerability details; review before sharing
 security/reports/
@@ -50,3 +53,5 @@ desktop.ini
 
 # Internal handoff notes (Spanish, not for publication)
 HANDOFF.md
+# ...but the committed example memory keeps its own handoff.md (case-insensitive match above).
+!context/memories/example/handoff.md

@@ -21,7 +21,7 @@ automatically load:
 | 2 | App skeleton | Spec-driven dev, plan mode, skills → implementation |
 | 3 | Tools & MCP | Your own MCP server, tool vs skill, dogfooding |
 | 4 | QA & Security | Parallel subagents, review passes |
-| 5 | Persistent memory | State across sessions, handoff |
+| 5 | Persistent memory | State across sessions, `/memory` handoff |
 | 6 | Orchestration | Coordinator-worker, git worktrees, full chain |
 | 7 | Contribution | Skill packaging, validation, PR |
 
@@ -114,3 +114,29 @@ git config core.hooksPath .githooks
 Patterns live in `.githooks/secret-patterns.txt`; `.env.example` and the patterns file
 are excluded from the scan. Bypass intentionally (rare) with `git commit --no-verify`.
 Copy `.env.example` to `.env` (gitignored) to configure the app — never commit real secrets.
+
+## Persistent memory (Stage 5)
+
+A local, runnable replica of a `session.json` handoff pattern so a session can be closed
+and a fresh one can pick up the context. Driven by a single command:
+
+```
+/memory init [name]     # seed a new memory from the current stage + git state
+/memory status [name]    # show stage, last update, open threads, next steps
+/memory save [name]      # refresh the memory before closing the session
+/memory resume [name]    # reconstruct the working context in a new session
+```
+
+Each memory is a directory `context/memories/<name>/` with three files:
+
+- `session.json` — structured state (stage, git branch/last commit, open threads, next steps,
+  decisions, timestamps).
+- `memory.md` — durable human-readable notes: decisions and learnings that persist.
+- `handoff.md` — the resume narrative: where we are / what's next / how to pick up.
+
+`context/memories/active` records the active memory name (used when no name is given). The
+`context/memories/` tree is **gitignored** runtime state; only `context/memories/example/`
+is committed as a sanitized reference showing the shape.
+
+**Checkpoint.** Run `/memory init`, do some work, `/memory save`, then close and reopen the
+session and run `/memory resume` — it restores the stage, open threads, and next steps.

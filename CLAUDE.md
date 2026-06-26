@@ -28,6 +28,7 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 - Task IDs follow the `TASK-NNN` format (see the `task-conventions` skill).
 - Product & build artifacts live in `docs/` (`docs/discovery/`, `docs/define/`, `docs/specify/`, `docs/plan/`).
 - Application code lives in `src/`.
+- Persistent memory (Stage 5): per-session working memory lives in `context/memories/<name>/` (`session.json` + `memory.md` + `handoff.md`), managed by the `/memory` command (`init|status|save|resume`). The tree is gitignored runtime state; only `context/memories/example/` is committed as a sanitized reference.
 - Secrets: never commit real values. Share config shape via `.env.example`; keep tokens out of `.mcp.json` (use env vars). The `.gitignore` is hardened for secrets, databases, logs, and runtime state. A base `.env.example` and a pre-commit secret-detection hook are planned for Stage 4.
 
 ## Lab status
@@ -37,6 +38,6 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 - [x] Stage 2 — App skeleton (specify → plan → implement)
 - [x] Stage 3 — Tools & MCP
 - [x] Stage 4 — QA & Security
-- [ ] Stage 5 — Persistent memory
+- [x] Stage 5 — Persistent memory
 - [ ] Stage 6 — Orchestration & full chain
 - [ ] Stage 7 — Contribution & packaging
