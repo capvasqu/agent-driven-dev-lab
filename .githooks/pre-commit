@@ -1,0 +1,34 @@
+#!/bin/sh
+# Pre-commit secret scan (Stage 4). Blocks a commit whose staged changes look like
+# they contain a secret. Zero dependencies — pure POSIX sh + grep.
+#
+# Enable (once per clone):   git config core.hooksPath .githooks
+# Bypass on purpose (rare):  git commit --no-verify
+#
+# Patterns live in .githooks/secret-patterns.txt. The sanctioned example file
+# (.env.example) and the patterns file itself are excluded from the scan.
+
+set -eu
+
+hookdir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+patterns="$hookdir/secret-patterns.txt"
+
+# New/added lines in the staged diff, excluding the example and the patterns file.
+added=$(git diff --cached --diff-filter=ACM -U0 \
+  -- . ':(exclude).env.example' ':(exclude).githooks/secret-patterns.txt' \
+  | grep '^+' | grep -v '^+++' || true)
+
+[ -z "$added" ] && exit 0
+
+hits=$(printf '%s\n' "$added" | grep -inE -f "$patterns" || true)
+
+if [ -n "$hits" ]; then
+  echo "x pre-commit: possible secret(s) detected in staged changes:" >&2
+  printf '%s\n' "$hits" >&2
+  echo "" >&2
+  echo "Remove the secret (use env vars / .env, which is gitignored)." >&2
+  echo "If this is a false positive, re-run with: git commit --no-verify" >&2
+  exit 1
+fi
+
+exit 0
