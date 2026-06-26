@@ -40,5 +40,5 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 - [x] Stage 3 — Tools & MCP
 - [x] Stage 4 — QA & Security
 - [x] Stage 5 — Persistent memory
-- [ ] Stage 6 — Orchestration & full chain
+- [x] Stage 6 — Orchestration & full chain
 - [ ] Stage 7 — Contribution & packaging
