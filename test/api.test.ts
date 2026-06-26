@@ -197,6 +197,107 @@ describe('GET /tasks — list (AC-3, AC-4, AC-5)', () => {
   });
 });
 
+describe('GET /tasks — priority filter (FAC-PRIO-1..6)', () => {
+  it('FAC-PRIO-1: ?priority=high returns only high tasks, hides archived, keeps order', async () => {
+    // Two high tasks (to check the createdAt tiebreaker within one priority),
+    // plus other priorities that must be excluded.
+    const high1 = await createTask({ title: 'high-1', priority: 'high' });
+    await createTask({ title: 'urgent', priority: 'urgent' });
+    const high2 = await createTask({ title: 'high-2', priority: 'high' });
+    await createTask({ title: 'low', priority: 'low' });
+    const highArchived = await createTask({ title: 'high-archived', priority: 'high' });
+    await app.inject({ method: 'POST', url: `/tasks/${highArchived.id}/archive` });
+
+    const res = await app.inject({ method: 'GET', url: '/tasks?priority=high' });
+    expect(res.statusCode).toBe(200);
+    const tasks = res.json();
+    // Only high priority rows.
+    expect(tasks.every((t: { priority: string }) => t.priority === 'high')).toBe(true);
+    const ids = tasks.map((t: { id: string }) => t.id);
+    // Archived high task is hidden by default.
+    expect(ids).not.toContain(highArchived.id);
+    // The two visible high tasks, in createdAt-ascending order (same priority rank).
+    expect(ids).toEqual([high1.id, high2.id]);
+  });
+
+  it('FAC-PRIO-2: ?priority=high&status=todo applies both filters (AND)', async () => {
+    // Target: high + todo.
+    const match = await createTask({ title: 'high-todo', priority: 'high' });
+    await app.inject({ method: 'POST', url: `/tasks/${match.id}/status`, payload: { direction: 'forward' } });
+
+    // high but still backlog — fails the status filter.
+    const highBacklog = await createTask({ title: 'high-backlog', priority: 'high' });
+
+    // todo but medium priority — fails the priority filter.
+    const mediumTodo = await createTask({ title: 'medium-todo', priority: 'medium' });
+    await app.inject({ method: 'POST', url: `/tasks/${mediumTodo.id}/status`, payload: { direction: 'forward' } });
+
+    const res = await app.inject({ method: 'GET', url: '/tasks?priority=high&status=todo' });
+    expect(res.statusCode).toBe(200);
+    const tasks = res.json();
+    expect(
+      tasks.every((t: { priority: string; status: string }) => t.priority === 'high' && t.status === 'todo'),
+    ).toBe(true);
+    const ids = tasks.map((t: { id: string }) => t.id);
+    expect(ids).toContain(match.id);
+    expect(ids).not.toContain(highBacklog.id);
+    expect(ids).not.toContain(mediumTodo.id);
+  });
+
+  it('FAC-PRIO-3: an unknown priority value is rejected 400 with the standard envelope', async () => {
+    const res = await app.inject({ method: 'GET', url: '/tasks?priority=bogus' });
+    expect(res.statusCode).toBe(400);
+    const body = res.json();
+    expect(body.error.code).toBe('VALIDATION_ERROR');
+    expect(typeof body.error.message).toBe('string');
+  });
+
+  it('FAC-PRIO-3/Q-1: an empty priority value (?priority=) is rejected 400', async () => {
+    const res = await app.inject({ method: 'GET', url: '/tasks?priority=' });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error.code).toBe('VALIDATION_ERROR');
+  });
+
+  it('FAC-PRIO-4: no priority filter is unchanged (no regression)', async () => {
+    // Seed mixed priorities plus an archived row.
+    const low = await createTask({ title: 'low', priority: 'low' });
+    const urgent = await createTask({ title: 'urgent', priority: 'urgent' });
+    const medium = await createTask({ title: 'medium', priority: 'medium' });
+    const archived = await createTask({ title: 'archived', priority: 'high' });
+    await app.inject({ method: 'POST', url: `/tasks/${archived.id}/archive` });
+
+    const res = await app.inject({ method: 'GET', url: '/tasks' });
+    expect(res.statusCode).toBe(200);
+    const ids = res.json().map((t: { id: string }) => t.id);
+    // Archived hidden, all priorities present, standard priority-then-createdAt order.
+    expect(ids).toEqual([urgent.id, medium.id, low.id]);
+    expect(ids).not.toContain(archived.id);
+  });
+
+  it('FAC-PRIO-5: ?priority=high&archived=true includes archived, still narrowed to high', async () => {
+    const highVisible = await createTask({ title: 'high-visible', priority: 'high' });
+    const highArchived = await createTask({ title: 'high-archived', priority: 'high' });
+    await app.inject({ method: 'POST', url: `/tasks/${highArchived.id}/archive` });
+    const lowArchived = await createTask({ title: 'low-archived', priority: 'low' });
+    await app.inject({ method: 'POST', url: `/tasks/${lowArchived.id}/archive` });
+
+    const res = await app.inject({ method: 'GET', url: '/tasks?priority=high&archived=true' });
+    expect(res.statusCode).toBe(200);
+    const tasks = res.json();
+    expect(tasks.every((t: { priority: string }) => t.priority === 'high')).toBe(true);
+    const ids = tasks.map((t: { id: string }) => t.id);
+    expect(ids).toContain(highVisible.id);
+    expect(ids).toContain(highArchived.id); // archived included
+    expect(ids).not.toContain(lowArchived.id); // narrowed to high
+  });
+
+  it('FAC-PRIO-6: an unknown query key alongside priority is rejected 400 (strict)', async () => {
+    const res = await app.inject({ method: 'GET', url: '/tasks?priority=high&bogus=x' });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error.code).toBe('VALIDATION_ERROR');
+  });
+});
+
 describe('GET /tasks/:id — read one (AC-6, AC-12)', () => {
   it('AC-6: returns a previously archived task by id with archived:true', async () => {
     const task = await createTask({ title: 'to-archive' });

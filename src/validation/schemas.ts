@@ -49,12 +49,18 @@ export const idParamSchema = {
   },
 } as const;
 
-/** `GET /tasks` querystring: optional `status` filter and `archived` flag. */
+/**
+ * `GET /tasks` querystring: optional `status` / `priority` filters and `archived`
+ * flag. `priority` mirrors `status` — a lowercase enum value, so an empty
+ * (`?priority=`) or unknown value fails enum validation → 400.
+ * `additionalProperties: false` keeps unknown query keys a 400 too.
+ */
 export const listQuerySchema = {
   type: 'object',
   additionalProperties: false,
   properties: {
     status: { type: 'string', enum: STATUS_VALUES },
+    priority: { type: 'string', enum: PRIORITY_VALUES },
     archived: { type: 'string', enum: ['true', 'false'] },
   },
 } as const;

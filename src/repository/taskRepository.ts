@@ -26,6 +26,7 @@ interface TaskRow {
 /** Options for the default list query (FR-4). */
 export interface ListOptions {
   status?: Status;
+  priority?: Priority;
   includeArchived?: boolean;
 }
 
@@ -114,8 +115,9 @@ export class TaskRepository {
 
   /**
    * List tasks (FR-4). Excludes archived unless `includeArchived`. Optional
-   * `status` filter. Ordered by priority rank (urgent>high>medium>low) via a
-   * CASE expression, then `createdAt` ascending as a stable tiebreaker.
+   * `status` and `priority` filters, AND-joined. Ordered by priority rank
+   * (urgent>high>medium>low) via a CASE expression, then `createdAt` ascending
+   * as a stable tiebreaker.
    */
   list(options: ListOptions = {}): Task[] {
     const conditions: string[] = [];
@@ -127,6 +129,10 @@ export class TaskRepository {
     if (options.status !== undefined) {
       conditions.push('status = ?');
       params.push(options.status);
+    }
+    if (options.priority !== undefined) {
+      conditions.push('priority = ?');
+      params.push(options.priority);
     }
 
     const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
