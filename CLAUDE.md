@@ -29,6 +29,7 @@ Published on GitHub (public): https://github.com/capvasqu/agent-driven-dev-lab
 - Product & build artifacts live in `docs/` (`docs/discovery/`, `docs/define/`, `docs/specify/`, `docs/plan/`).
 - Application code lives in `src/`.
 - Persistent memory (Stage 5): per-session working memory lives in `context/memories/<name>/` (`session.json` + `memory.md` + `handoff.md`), managed by the `/memory` command (`init|status|save|resume`). The tree is gitignored runtime state; only `context/memories/example/` is committed as a sanitized reference.
+- Orchestration (Stage 6): `/feature <slug> "..."` drives `specify → plan → implement → qa` for a new feature in a git worktree (branch `feat/<slug>`), with a human gate per phase. Per-feature artifacts live under `docs/features/<slug>/`; the whole-app artifacts stay the baseline.
 - Secrets: never commit real values. Share config shape via `.env.example`; keep tokens out of `.mcp.json` (use env vars). The `.gitignore` is hardened for secrets, databases, logs, and runtime state. A base `.env.example` and a pre-commit secret-detection hook are planned for Stage 4.
 
 ## Lab status

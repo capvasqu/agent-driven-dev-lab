@@ -140,3 +140,32 @@ is committed as a sanitized reference showing the shape.
 
 **Checkpoint.** Run `/memory init`, do some work, `/memory save`, then close and reopen the
 session and run `/memory resume` — it restores the stage, open threads, and next steps.
+
+## Orchestration (Stage 6)
+
+`/feature` chains the whole build pipeline for a new feature — `specify → plan → implement → qa`
+— in an isolated git worktree, **stopping for human approval at every phase**. The main thread
+acts as the coordinator and reuses the existing workers (`implementer`, `qa-engineer`); only the
+main thread can pause for a human, which keeps "agents propose, humans decide" intact inside the
+chain.
+
+```
+/feature <slug> "<feature description>"
+```
+
+What it does, phase by phase (each ends in a gate you must approve):
+
+1. **Scope & setup** — restate the idea as a brief; on approval, `git worktree add ../add-lab-feat-<slug> -b feat/<slug>` and `npm install` there.
+2. **Specify** — `implementer` writes `docs/features/<slug>/spec.md` in the worktree.
+3. **Plan** — `implementer` writes `docs/features/<slug>/plan.md` (`TASK-NNN` items).
+4. **Implement** — `implementer` writes code into the worktree's `src/`; `npm run build`.
+5. **QA** — `qa-engineer` writes tests into the worktree's `test/`; `npm test` until green.
+6. **Land** — it prints the merge/cleanup commands; it never auto-merges or auto-pushes.
+
+Per-feature artifacts live under `docs/features/<slug>/`, separate from the whole-app baseline
+(`docs/specify/spec.md`, `docs/plan/plan.md`). The feature is built on a `feat/<slug>` branch in
+a worktree, so `main` stays untouched until you merge.
+
+**Checkpoint.** `/feature tasks-priority-filter "Add an optional ?priority= filter to GET /tasks"`
+takes the idea to tested code: `npm test` green in the worktree, then
+`curl "http://localhost:3000/tasks?priority=high"` returns only high-priority tasks.
