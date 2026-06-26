@@ -4,6 +4,7 @@ import { targetState } from '../domain/transitions.js';
 import type {
   CreateTaskInput,
   Direction,
+  Priority,
   Status,
   UpdateTaskInput,
 } from '../domain/types.js';
@@ -34,6 +35,7 @@ interface IdParams {
 
 interface ListQuery {
   status?: Status;
+  priority?: Priority;
   archived?: 'true' | 'false';
 }
 
@@ -58,9 +60,10 @@ export function registerTaskRoutes(
     '/tasks',
     { schema: { querystring: listQuerySchema } },
     (request, reply) => {
-      const { status, archived } = request.query;
+      const { status, priority, archived } = request.query;
       const tasks = repo.list({
         status,
+        priority,
         includeArchived: archived === 'true',
       });
       reply.code(200).send(tasks);
