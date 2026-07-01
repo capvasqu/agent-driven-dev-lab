@@ -64,8 +64,14 @@ function listFiles(dir) {
   return acc;
 }
 
+// Compare content ignoring line-ending style: git's autocrlf can check out the
+// plugin copies and their .claude/ sources with different EOLs in the working
+// tree even though the committed blobs are identical, which would otherwise
+// trip a byte-exact check with false drift.
+const normalized = (p) => readFileSync(p, 'utf8').replace(/\r\n/g, '\n');
+
 function parity() {
-  // Every shipped file must byte-match its .claude/ source.
+  // Every shipped file must match its .claude/ source (EOL-insensitive).
   for (const file of listFiles(pluginDir)) {
     const rel = relative(pluginDir, file).split('\\').join('/');
     if (rel.startsWith('.claude-plugin/')) continue; // manifest is plugin-only
@@ -74,7 +80,7 @@ function parity() {
       errors.push(`shipped file has no .claude/ source: ${rel}`);
       continue;
     }
-    if (!readFileSync(file).equals(readFileSync(source))) {
+    if (normalized(file) !== normalized(source)) {
       errors.push(`drift: plugin copy differs from .claude/${rel}`);
     }
   }
