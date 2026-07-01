@@ -23,7 +23,7 @@ automatically load:
 | 4 | QA & Security | Parallel subagents, review passes |
 | 5 | Persistent memory | State across sessions, `/memory` handoff |
 | 6 | Orchestration | Coordinator-worker, git worktrees, full chain |
-| 7 | Contribution | Skill packaging, validation, PR |
+| 7 | Contribution | Plugin/marketplace packaging, `validate`, PR |
 
 ## Verifying Stage 0
 
@@ -169,3 +169,32 @@ a worktree, so `main` stays untouched until you merge.
 **Checkpoint.** `/feature tasks-priority-filter "Add an optional ?priority= filter to GET /tasks"`
 takes the idea to tested code: `npm test` green in the worktree, then
 `curl "http://localhost:3000/tasks?priority=high"` returns only high-priority tasks.
+
+## Contribution & packaging (Stage 7)
+
+The reusable Agent-Driven Development toolkit is distributed as a **Claude Code plugin** served
+from a marketplace in this repo:
+
+- `.claude-plugin/marketplace.json` — the marketplace catalog.
+- `plugins/agent-driven-dev/` — the plugin (`.claude-plugin/plugin.json` + `commands/`,
+  `agents/`, `skills/`): the product-to-code chain (`brief, prd, specify, plan, implement, qa`),
+  the `/feature` orchestrator, the `/memory` handoff, the three subagents, and the convention
+  skills. (Lab-only `/hello` is not shipped.)
+
+Install it in another project:
+
+```
+/plugin marketplace add capvasqu/agent-driven-dev-lab
+/plugin install agent-driven-dev@agent-driven-dev-lab
+```
+
+Plugin components are namespaced, e.g. `/agent-driven-dev:feature`. The plugin holds copies of
+the `.claude/` capabilities (a marketplace copies the plugin dir to a cache, so it must be
+self-contained); `npm run validate` enforces byte-parity so the distributable never drifts:
+
+```bash
+npm run validate   # claude plugin validate --strict + parity + marketplace catalog
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for conventions, how to add a capability, the local gate,
+and the pull-request flow.
