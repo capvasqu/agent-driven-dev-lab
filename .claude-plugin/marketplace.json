@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "agent-driven-dev-lab",
+  "owner": {
+    "name": "Carlos Polo",
+    "url": "https://github.com/capvasqu"
+  },
+  "plugins": [
+    {
+      "name": "agent-driven-dev",
+      "source": "./plugins/agent-driven-dev",
+      "description": "Agent-Driven Development toolkit: product-to-code chain, /feature orchestrator, /memory handoff, subagents, and convention skills."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "agent-driven-dev",
+  "version": "0.1.0",
+  "description": "Agent-Driven Development toolkit: the product-to-code chain (brief, prd, specify, plan, implement, qa), a /feature orchestrator, a /memory handoff, plus supporting subagents and convention skills.",
+  "author": {
+    "name": "Carlos Polo"
+  },
+  "homepage": "https://github.com/capvasqu/agent-driven-dev-lab",
+  "repository": "https://github.com/capvasqu/agent-driven-dev-lab",
+  "license": "MIT",
+  "keywords": [
+    "agent-driven-development",
+    "workflow",
+    "orchestration",
+    "spec-driven",
+    "kanban"
+  ]
+}
